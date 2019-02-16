@@ -7,7 +7,7 @@ Functions related to Component or protocols will go here.
 ## Installation
 
 ```clojure
-[com.nedap.staffing-solutions/utils.modular "0.1.0"]
+[com.nedap.staffing-solutions/utils.modular "0.1.1"]
 ````
 
 ## ns organisation

@@ -25,9 +25,9 @@
   [ns sym]
   (some->> sym (ns-resolve ns) impl-method-var?))
 
-(defn maybe-qualify [ns s]
+(defn fully-qualify [ns s]
   (if (qualified-symbol? s)
-    s
+    (symbol (resolve s)) ;; turns 'component/start into 'com.stuartsierra.component/start
     (symbol (str ns) (str s))))
 
 (defn implement [obj ns kvs]
@@ -41,5 +41,5 @@
      (vary-meta ~obj assoc ~@(->> kvs
                                   (partition 2)
                                   (mapv (fn [[x y]]
-                                          [(list 'quote (maybe-qualify ns x)) y]))
+                                          [(list 'quote (fully-qualify ns x)) y]))
                                   (apply concat)))))

@@ -1,4 +1,4 @@
-(defproject com.nedap.staffing-solutions/utils.modular "0.1.0"
+(defproject com.nedap.staffing-solutions/utils.modular "0.1.1"
   :description "Utilities for creating modular Clojure systems."
   :url ""
   :repositories {"releases"       {:url      "https://nedap.jfrog.io/nedap/staffing-solutions/"
