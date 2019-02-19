@@ -18,6 +18,7 @@
   It is verified at runtime that the symbols do resove to protocol functions and implementation functions (respectively).
 
   This run-time checking yields a superior solution to plain metadata-based protocol extension, where symbols may contain typos."
+  {:style/indent 1}
   [object & methods]
   {:pre [(check! (spec/coll-of ::method-pair :min-count 1) (partition 2 methods)
                  metadata-extension-supported? *clojure-version*)]}
