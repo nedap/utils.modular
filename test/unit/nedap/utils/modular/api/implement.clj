@@ -16,6 +16,8 @@
 (defn foo-impl [this x]
   (+ x x))
 
+(def not-an-impl 2)
+
 (deftest implement
   (testing "metadata is associated, and ns-qualifed"
     (is (= foo-impl (-> (sut/implement {}
@@ -33,10 +35,10 @@
       (is (thrown? Exception (sut/implement {}
                                foo-impl foo)))))
 
-  (testing "functions that don't satisfy the protocol"
+  (testing "values that don't resolve to a function"
     (with-out-str
       (is (thrown? Exception (sut/implement {}
-                               foo-impl inc)))))
+                               foo not-an-impl)))))
 
   (testing "made-up symbols"
     (with-out-str
