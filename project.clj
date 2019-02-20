@@ -1,4 +1,4 @@
-(defproject com.nedap.staffing-solutions/utils.modular "0.2.0"
+(defproject com.nedap.staffing-solutions/utils.modular "0.2.1"
   :description "Utilities for creating modular Clojure systems."
   :url "https://github.com/nedap/utils.modular"
   :repositories {"releases"       {:url      "https://nedap.jfrog.io/nedap/staffing-solutions/"
@@ -11,5 +11,5 @@
                      :password :env/artifactory_pass}}
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[com.nedap.staffing-solutions/utils.spec "0.1.1"]
+  :dependencies [[com.nedap.staffing-solutions/utils.spec "0.2.0"]
                  [org.clojure/clojure "1.10.0"]])
