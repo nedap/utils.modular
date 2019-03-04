@@ -13,7 +13,8 @@
 
 (defn impl-method-var? [v]
   (and (not (-> v meta :protocol))
-       (-> v deref fn?)))
+       (or (-> v deref fn?)
+           (->> v deref (instance? clojure.lang.MultiFn)))))
 
 (defn resolves-to-protocol-method?
   "Does `sym` resolve to a function that is an abstract protocol method?"

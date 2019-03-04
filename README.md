@@ -48,7 +48,7 @@ This is how it looks like:
 ## Installation
 
 ```clojure
-[com.nedap.staffing-solutions/utils.modular "0.2.0"]
+[com.nedap.staffing-solutions/utils.modular "0.2.2"]
 ````
 
 ## ns organisation
