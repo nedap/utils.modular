@@ -1,6 +1,8 @@
 (ns nedap.utils.modular.api
   (:require
+   [clojure.repl]
    [clojure.spec.alpha :as spec]
+   [nedap.utils.modular.impl.defmethod :refer [defmethod-source]]
    [nedap.utils.modular.impl.implement :as implement]
    [nedap.utils.spec.api :refer [check!]]))
 
@@ -23,3 +25,9 @@
   {:pre [(check! (spec/coll-of ::method-pair :min-count 1) (partition 2 methods)
                  metadata-extension-supported? *clojure-version*)]}
   (implement/implement object *ns* methods))
+
+(defmacro add-method
+  "Installs a new method of multimethod associated with dispatch-value."
+  {:pre [(-> 'defmethod clojure.repl/source-fn #{defmethod-source})]}
+  [multifn dispatch-val f]
+  `(. ~(with-meta multifn {:tag 'clojure.lang.MultiFn}) addMethod ~dispatch-val ~f))

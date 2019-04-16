@@ -45,10 +45,26 @@ This is how it looks like:
 (implement {} component/start start component/stop stop)
 ```
 
+#### `nedap.utils.modular.api/add-method`
+
+`clojure.core/defmethod` does the following:
+
+> Creates and installs a new method of multimethod associated with dispatch-value.
+
+`add-method` does the same exact thing, but skipping the `Creates` part. i.e., it merely associates an existing function to a multimethod.
+
+This has multiple advantages:
+
+* One can code with plain defns, making things more homogeneous
+  * And decoupled, reusable
+* Said defns can be [utils.spec](https://github.com/nedap/utils.spec/) ones
+* Importantly, one should understand that `defmethod` is a side-effect, and as such should be avoided.
+  * Better to `add-method` in a [Component](https://github.com/stuartsierra/component) `start` definition
+
 ## Installation
 
 ```clojure
-[com.nedap.staffing-solutions/utils.modular "0.2.2"]
+[com.nedap.staffing-solutions/utils.modular "0.3.0"]
 ````
 
 ## ns organisation
