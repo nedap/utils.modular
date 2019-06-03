@@ -2,9 +2,11 @@
   (:require
    [clojure.repl]
    [clojure.spec.alpha :as spec]
+   [com.stuartsierra.component :as component]
    [nedap.utils.modular.impl.defmethod :refer [defmethod-source]]
    [nedap.utils.modular.impl.implement :as implement]
-   [nedap.utils.spec.api :refer [check!]]))
+   [nedap.utils.spec.api :refer [check!]]
+   [nedap.utils.speced :as speced]))
 
 (spec/def ::method-pair (spec/cat :protocol-method symbol? :function-reference symbol?))
 
@@ -31,3 +33,24 @@
   {:pre [(-> 'defmethod clojure.repl/source-fn #{defmethod-source})]}
   [multifn dispatch-val f]
   `(. ~(with-meta multifn {:tag 'clojure.lang.MultiFn}) addMethod ~dispatch-val ~f))
+
+(spec/def ::component       #(speced/satisfies? component/Lifecycle %))
+(spec/def ::dependency-map  (spec/map-of keyword? keyword?))
+(spec/def ::dependency-vec  (spec/coll-of keyword? :kind vector?))
+(spec/def ::dependency-coll (spec/or ::dependency-map ::dependency-vec))
+
+(defn using
+  "Extension of `com.stuartsierra.component/using` with an optional map
+   as third argument with additional overwrites of the provided dependencies"
+  ([^::component component
+    ^::dependency-coll dependencies]
+   (using component dependencies nil))
+
+  ([^::component component
+    ^::dependency-coll dependencies
+    ^::dependency-map rename-map]
+   (let [dependencies (if (map? dependencies)
+                        dependencies
+                        (zipmap dependencies dependencies))]
+     (component/using component
+                      (merge dependencies rename-map)))))
