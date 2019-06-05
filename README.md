@@ -10,7 +10,7 @@ Functions related to Component or protocols will go here.
 
 `implement` is a safer layer over raw metadata-based protocol extension.
 
-> Metadata-based protocol extension might be a reliable solution against [this](https://github.com/clojure/tools.namespace/tree/bb9d7a1e98cc5a1ff53107966c96af6886eb0f5b#warnings-for-protocols) problem.
+> Metadata-based protocol extension has recently proven to be a reliable solution against [this](https://github.com/clojure/tools.namespace/tree/bb9d7a1e98cc5a1ff53107966c96af6886eb0f5b#warnings-for-protocols) problem.
 
 In plain Clojure you might be tempted to do:
 
@@ -36,8 +36,10 @@ However, several things might go wrong:
   * e.g. to a function of not emitted by `defprotocol`
 * What if `start` does not evaluate to a function?
   * i.e. any other kind of value
-  
-`implement` guards you against all of those. It also provides some sugar (symbols don't have to be quoted) and enforcement (you cannot pass anything other than a symbol; this aims to avoid deeply nested, non-reusable code).
+
+`implement` guards you against all of those, preventing the lack of errors (or opaque errors, at best) that you'd get otherwise.
+
+It also provides some sugar (symbols don't have to be quoted) and enforcement (you cannot pass anything other than a symbol; this aims to avoid deeply nested, non-reusable code).
 
 This is how it looks like:
 
