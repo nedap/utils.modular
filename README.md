@@ -63,15 +63,15 @@ This has multiple advantages:
 * Importantly, one should understand that `defmethod` is a side-effect, and as such should be avoided.
   * Better to `add-method` in a [Component](https://github.com/stuartsierra/component) `start` definition
   
-#### `nedap.utils.modular.api/using`
+#### `nedap.utils.modular.api/dependent`
 
-Helper fn for `com.stuartsierra.component/using` which takes an optional third argument renaming
-the expected key for the dependencies. Note that the dependencies can be passed as a vector or a map.
+Helper fn for `com.stuartsierra.component/using` which takes a dependency collection and optionally
+a map with renames. Note that the dependencies can be passed as a vector or a map.
 
 ```clojure
-(using (my-component/new)
-       my-component/dependencies
-       {:internal ::my-component/external})
+(dependent (my-component/new)
+       :on my-component/dependencies
+       :renames {:internal ::my-component/external})
 ```
 
 This allows the user to keep using the `dependencies`-def while maintaining the flexibility to rename

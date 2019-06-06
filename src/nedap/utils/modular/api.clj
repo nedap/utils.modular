@@ -37,20 +37,18 @@
 (spec/def ::component       #(speced/satisfies? component/Lifecycle %))
 (spec/def ::dependency-map  (spec/map-of keyword? keyword?))
 (spec/def ::dependency-vec  (spec/coll-of keyword? :kind vector?))
-(spec/def ::dependency-coll (spec/or ::dependency-map ::dependency-vec))
+(spec/def ::dependency-coll (spec/or :m ::dependency-map :v ::dependency-vec))
+(spec/def ::rename-map      (spec/or :m ::dependency-map :n nil?))
 
-(defn using
-  "Extension of `com.stuartsierra.component/using` with an optional map
-   as third argument with additional overwrites of the provided dependencies"
-  ([^::component component
-    ^::dependency-coll dependencies]
-   (using component dependencies nil))
-
-  ([^::component component
-    ^::dependency-coll dependencies
-    ^::dependency-map rename-map]
-   (let [dependencies (if (map? dependencies)
-                        dependencies
-                        (zipmap dependencies dependencies))]
-     (component/using component
-                      (merge dependencies rename-map)))))
+(speced/defn dependent
+  "A replacement for `#'com.stuartsierra.component/using`,
+  in which renames can be summed to non-renamed dependencies"
+  [^::component component
+   & {:keys [on renames]}]
+  {:pre [(check! ::dependency-coll on
+                 ::rename-map renames)]}
+  (let [dependencies (if (map? on)
+                       on
+                       (zipmap on on))]
+    (component/using component
+                     (merge dependencies renames))))
