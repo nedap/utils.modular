@@ -2,7 +2,8 @@
   (:require
    [clojure.test :refer :all]
    [com.stuartsierra.component :as component]
-   [nedap.utils.modular.api :as sut]))
+   [nedap.utils.modular.api :as sut])
+  (:import (clojure.lang ExceptionInfo)))
 
 (deftest dependent
   (are [description dependencies rename expected]
@@ -35,4 +36,9 @@
     "Rename additional dependencies from map"
     {:a :b}
     {:c :d}
-    {:a :b :c :d}))
+    {:a :b :c :d})
+
+  ;; TODO use spec-assertion-thrown?
+  ;; https://github.com/nedap/utils.spec/pull/55
+  (testing "Wrong keys in options"
+    (is (thrown? ExceptionInfo (with-out-str (sut/dependent {} :on {} :reneames {}))))))

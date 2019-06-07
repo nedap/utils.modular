@@ -70,8 +70,8 @@ a map with renames. Note that the dependencies can be passed as a vector or a ma
 
 ```clojure
 (dependent (my-component/new)
-       :on my-component/dependencies
-       :renames {:internal ::my-component/external})
+           :on my-component/dependencies
+           :renames {:internal ::my-component/external})
 ```
 
 This allows the user to keep using the `dependencies`-def while maintaining the flexibility to rename

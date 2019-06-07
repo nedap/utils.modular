@@ -1,10 +1,12 @@
 (ns nedap.utils.modular.api
   (:require
    [clojure.repl]
+   [clojure.set :as set]
    [clojure.spec.alpha :as spec]
    [com.stuartsierra.component :as component]
    [nedap.utils.modular.impl.defmethod :refer [defmethod-source]]
    [nedap.utils.modular.impl.implement :as implement]
+   [nedap.utils.modular.impl.dependent :as dependent]
    [nedap.utils.spec.api :refer [check!]]
    [nedap.utils.speced :as speced]))
 
@@ -34,21 +36,8 @@
   [multifn dispatch-val f]
   `(. ~(with-meta multifn {:tag 'clojure.lang.MultiFn}) addMethod ~dispatch-val ~f))
 
-(spec/def ::component       #(speced/satisfies? component/Lifecycle %))
-(spec/def ::dependency-map  (spec/map-of keyword? keyword?))
-(spec/def ::dependency-vec  (spec/coll-of keyword? :kind vector?))
-(spec/def ::dependency-coll (spec/or :m ::dependency-map :v ::dependency-vec))
-(spec/def ::rename-map      (spec/or :m ::dependency-map :n nil?))
-
-(speced/defn dependent
+(defn dependent
   "A replacement for `#'com.stuartsierra.component/using`,
   in which renames can be summed to non-renamed dependencies"
-  [^::component component
-   & {:keys [on renames]}]
-  {:pre [(check! ::dependency-coll on
-                 ::rename-map renames)]}
-  (let [dependencies (if (map? on)
-                       on
-                       (zipmap on on))]
-    (component/using component
-                     (merge dependencies renames))))
+  [component & {:keys [on renames] :as opts}]
+  (dependent/dependent component opts))
