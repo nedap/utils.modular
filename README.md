@@ -62,6 +62,20 @@ This has multiple advantages:
 * Said defns can be [utils.spec](https://github.com/nedap/utils.spec/) ones
 * Importantly, one should understand that `defmethod` is a side-effect, and as such should be avoided.
   * Better to `add-method` in a [Component](https://github.com/stuartsierra/component) `start` definition
+  
+#### `nedap.utils.modular.api/dependent`
+
+Helper fn for `com.stuartsierra.component/using` which takes a dependency collection and optionally
+a map with renames. Note that the dependencies can be passed as a vector or a map.
+
+```clojure
+(dependent (my-component/new)
+           :on my-component/dependencies
+           :renames {:internal ::my-component/external})
+```
+
+This allows the user to keep using the `dependencies`-def while maintaining the flexibility to rename
+some keys.
 
 ## Installation
 

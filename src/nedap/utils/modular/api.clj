@@ -1,10 +1,14 @@
 (ns nedap.utils.modular.api
   (:require
    [clojure.repl]
+   [clojure.set :as set]
    [clojure.spec.alpha :as spec]
+   [com.stuartsierra.component :as component]
    [nedap.utils.modular.impl.defmethod :refer [defmethod-source]]
    [nedap.utils.modular.impl.implement :as implement]
-   [nedap.utils.spec.api :refer [check!]]))
+   [nedap.utils.modular.impl.dependent :as dependent]
+   [nedap.utils.spec.api :refer [check!]]
+   [nedap.utils.speced :as speced]))
 
 (spec/def ::method-pair (spec/cat :protocol-method symbol? :function-reference symbol?))
 
@@ -31,3 +35,9 @@
   {:pre [(-> 'defmethod clojure.repl/source-fn #{defmethod-source})]}
   [multifn dispatch-val f]
   `(. ~(with-meta multifn {:tag 'clojure.lang.MultiFn}) addMethod ~dispatch-val ~f))
+
+(defn dependent
+  "A replacement for `#'com.stuartsierra.component/using`,
+  in which renames can be summed to non-renamed dependencies"
+  [component & {:keys [on renames] :as opts}]
+  (dependent/dependent component opts))
