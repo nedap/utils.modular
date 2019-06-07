@@ -1,6 +1,6 @@
 (defproject com.nedap.staffing-solutions/utils.modular "0.3.0"
   ;; Please keep the dependencies sorted a-z.
-  :dependencies [[com.nedap.staffing-solutions/utils.spec "0.6.2"]
+  :dependencies [[com.nedap.staffing-solutions/utils.spec "0.8.2"]
                  [com.stuartsierra/component "0.4.0"]
                  [org.clojure/clojure "1.10.0"]]
 

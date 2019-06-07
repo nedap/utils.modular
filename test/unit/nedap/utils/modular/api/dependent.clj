@@ -2,8 +2,8 @@
   (:require
    [clojure.test :refer :all]
    [com.stuartsierra.component :as component]
-   [nedap.utils.modular.api :as sut])
-  (:import (clojure.lang ExceptionInfo)))
+   [nedap.utils.modular.api :as sut]
+   [nedap.utils.modular.impl.dependent :as impl.dependent]))
 
 (deftest dependent
   (are [description dependencies rename expected]
@@ -38,7 +38,5 @@
     {:c :d}
     {:a :b :c :d})
 
-  ;; TODO use spec-assertion-thrown?
-  ;; https://github.com/nedap/utils.spec/pull/55
   (testing "Wrong keys in options"
-    (is (thrown? ExceptionInfo (with-out-str (sut/dependent {} :on {} :reneames {}))))))
+    (is (spec-assertion-thrown? ::impl.dependent/options (sut/dependent {} :on {} :reneames {})))))
