@@ -27,7 +27,7 @@
   {:style/indent 1}
   [object & methods]
   {:pre [(check! (spec/coll-of ::method-pair :min-count 1) (partition 2 methods)
-                 metadata-extension-supported? *clojure-version*)]}
+                 metadata-extension-supported?             *clojure-version*)]}
   (implement/implement object *ns* methods))
 
 (defmacro add-method

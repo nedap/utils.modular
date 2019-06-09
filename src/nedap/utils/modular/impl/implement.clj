@@ -28,7 +28,10 @@
 
 (defn fully-qualify [ns s]
   (if (qualified-symbol? s)
-    (symbol (resolve s)) ;; turns 'component/start into 'com.stuartsierra.component/start
+    ;; turn 'component/start into 'com.stuartsierra.component/start:
+    (do
+      (check! resolve s)
+      (symbol (resolve s)))
     (symbol (str ns) (str s))))
 
 (defn implement [obj ns kvs]

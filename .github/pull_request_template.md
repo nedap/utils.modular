@@ -17,7 +17,6 @@
   * [ ] Documentation
   * [ ] Security
   * [ ] Performance
-  * [ ] Cross-compatibility (Clojure/ClojureScript)
 
 ## Reviewer checklist
 
@@ -32,4 +31,3 @@
   * [ ] Documentation
   * [ ] Security
   * [ ] Performance
-  * [ ] Cross-compatibility (Clojure/ClojureScript)

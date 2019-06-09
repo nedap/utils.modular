@@ -45,6 +45,15 @@
       (is (thrown? Exception (eval '(sut/implement {}
                                       foo-impl oooooommmmmggggg))))))
 
+  (testing "spurious aliases in either side of the mapping"
+    (with-out-str
+      (is (thrown? Exception (eval '(sut/implement {}
+                                      made/up inc)))))
+
+    (with-out-str
+      (is (thrown? Exception (eval '(sut/implement {}
+                                      foo made/up))))))
+
   (testing "Implementing incompatible protocols is prevented"
     (is (thrown-with-msg? Exception #"The targeted protocol does not have `:extend-via-metadata` activated."
                           (sut/implement {}
