@@ -10,7 +10,8 @@
    [nedap.utils.spec.api :refer [check!]]
    [nedap.utils.speced :as speced]))
 
-(spec/def ::method-pair (spec/cat :protocol-method symbol? :function-reference symbol?))
+(spec/def ::method-pair (spec/cat :protocol-method    symbol?
+                                  :function-reference symbol?))
 
 (defn metadata-extension-supported? [clojure-version]
   (or (-> clojure-version :minor (> 9))

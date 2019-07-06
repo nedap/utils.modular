@@ -36,6 +36,7 @@
 
 (defn implement [obj ns kvs]
   `(do
+     (check! some? ~obj)
      (doseq [[protocol-symbol# implementation-symbol#] ~(->> kvs
                                                              (partition 2)
                                                              (mapv (fn [[x y]]
