@@ -1,4 +1,4 @@
-(defproject com.nedap.staffing-solutions/utils.modular "0.3.0"
+(defproject com.nedap.staffing-solutions/utils.modular "0.4.0"
   ;; Please keep the dependencies sorted a-z.
   :dependencies [[com.nedap.staffing-solutions/utils.spec "0.8.2"]
                  [com.stuartsierra/component "0.4.0"]

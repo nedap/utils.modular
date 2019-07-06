@@ -82,7 +82,7 @@ some keys.
 ## Installation
 
 ```clojure
-[com.nedap.staffing-solutions/utils.modular "0.3.0"]
+[com.nedap.staffing-solutions/utils.modular "0.4.0"]
 ````
 
 ## ns organisation
