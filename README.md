@@ -79,6 +79,13 @@ a map with renames. Note that the dependencies can be passed as a vector or a ma
 This allows the user to keep using the `dependencies`-def while maintaining the flexibility to rename
 some keys.
 
+#### `nedap.utils.modular.api/omit-this [f]`
+
+Creates a replacement for `f` which drops the first argument, presumed to be of \"this\" type.
+Apt for protocol extensions, when `f` is an arbitrary function which may not participate in our protocols at all.
+
+Refer to its test for an example.
+
 ## Installation
 
 ```clojure

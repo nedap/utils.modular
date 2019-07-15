@@ -1,9 +1,5 @@
 ## Brief
 
-## QA plan
-
-## Author checklist
-
 <!-- Which issue does this PR fix? Ideally, create an issue if there was none, so the problem in question is well stated. -->
 
 ## QA plan

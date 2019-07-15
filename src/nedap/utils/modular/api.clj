@@ -1,14 +1,11 @@
 (ns nedap.utils.modular.api
   (:require
    [clojure.repl]
-   [clojure.set :as set]
    [clojure.spec.alpha :as spec]
-   [com.stuartsierra.component :as component]
    [nedap.utils.modular.impl.defmethod :refer [defmethod-source]]
-   [nedap.utils.modular.impl.implement :as implement]
    [nedap.utils.modular.impl.dependent :as dependent]
-   [nedap.utils.spec.api :refer [check!]]
-   [nedap.utils.speced :as speced]))
+   [nedap.utils.modular.impl.implement :as implement]
+   [nedap.utils.spec.api :refer [check!]]))
 
 (spec/def ::method-pair (spec/cat :protocol-method    symbol?
                                   :function-reference symbol?))
@@ -42,3 +39,10 @@
   in which renames can be summed to non-renamed dependencies"
   [component & {:keys [on renames] :as opts}]
   (dependent/dependent component opts))
+
+(defn omit-this
+  "Creates a replacement for `f` which drops the first argument, presumed to be of \"this\" type.
+  Apt for protocol extensions, when `f` is an arbitrary function which may not participate in our protocols at all."
+  [f]
+  (fn [_ & args]
+    (apply f args)))
