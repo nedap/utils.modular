@@ -12,4 +12,7 @@
 
 (deftest omit-this
   (is (= 3
-         (sum adder 1 2))))
+         (sum adder 1 2)))
+
+  (is (= 3
+         (example-protocol/sum adder 1 2))))
