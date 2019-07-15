@@ -1,5 +1,5 @@
 ;; Please don't bump the library version by hand - use ci.release-workflow instead.
-(defproject com.nedap.staffing-solutions/utils.modular "0.4.0"
+(defproject com.nedap.staffing-solutions/utils.modular "1.0.0"
   ;; Please keep the dependencies sorted a-z.
   :dependencies [[com.nedap.staffing-solutions/utils.spec "0.9.0"]
                  [com.stuartsierra/component "0.4.0"]
