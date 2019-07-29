@@ -89,7 +89,7 @@ Refer to its test for an example.
 ## Installation
 
 ```clojure
-[com.nedap.staffing-solutions/utils.modular "1.0.0"]
+[com.nedap.staffing-solutions/utils.modular "2.0.0"]
 ````
 
 ## ns organisation
