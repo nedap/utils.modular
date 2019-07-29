@@ -8,10 +8,10 @@
 (deftest dependent
   (are [description dependencies rename expected]
        (testing description
-        (let [component (sut/dependent {} :on dependencies :renames rename)
-              dependency-map (::component/dependencies (meta component))]
-          (= expected
-             dependency-map)))
+         (let [component (sut/dependent {} :on dependencies :renames rename)
+               dependency-map (::component/dependencies (meta component))]
+           (= expected
+              dependency-map)))
 
     "Without renames"
     [:a]

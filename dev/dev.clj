@@ -17,15 +17,15 @@
 
 (defn suite []
   (refresh)
-  (run-all-tests #".*\.nedap\.utils\.modular\..*"))
+  (run-all-tests #".*\.nedap\.utils\.modular.*"))
 
 (defn unit []
   (refresh)
-  (run-all-tests #"unit\.nedap\.utils\.modular\..*"))
+  (run-all-tests #"unit\.nedap\.utils\.modular.*"))
 
 (defn slow []
   (refresh)
-  (run-all-tests #"integration\.nedap\.utils\.modular\..*"))
+  (run-all-tests #"integration\.nedap\.utils\.modular.*"))
 
 (defn diff [x y]
   (-> x

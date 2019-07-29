@@ -3,8 +3,7 @@
    [clojure.set :as set]
    [clojure.spec.alpha :as spec]
    [com.stuartsierra.component :as component]
-   [nedap.utils.spec.api :refer [check!]]
-   [nedap.utils.speced :as speced]))
+   [nedap.speced.def :as speced]))
 
 (spec/def ::component       #(speced/satisfies? component/Lifecycle %))
 (spec/def ::dependency-map  (spec/map-of keyword? keyword?))

@@ -78,26 +78,26 @@
     (assert (not (aliased? 'made)))
 
     (with-out-str
-      (let [v (try
-                (eval (list 'do
-                            (list `in-ns (->> this-ns str symbol (list 'quote)))
-                            '(nedap.utils.modular.api/implement {}
-                               made/up inc)))
-                (is false)
-                (catch Exception e
-                  e))]
-        (is (-> v .getCause .getMessage #{"Validation failed"}))
+      (let [^Exception v (try
+                           (eval (list 'do
+                                       (list `in-ns (->> this-ns str symbol (list 'quote)))
+                                       '(nedap.utils.modular.api/implement {}
+                                          made/up inc)))
+                           (is false)
+                           (catch Exception e
+                             e))]
+        (is (-> v  .getCause .getMessage #{"Validation failed"}))
         (is (-> v .getCause class #{ExceptionInfo}))))
 
     (with-out-str
-      (let [v (try
-                (eval (list 'do
-                            (list `in-ns (->> this-ns str symbol (list 'quote)))
-                            '(nedap.utils.modular.api/implement {}
-                               foo made/up)))
-                (is false)
-                (catch Exception e
-                  e))]
+      (let [^Exception v (try
+                           (eval (list 'do
+                                       (list `in-ns (->> this-ns str symbol (list 'quote)))
+                                       '(nedap.utils.modular.api/implement {}
+                                          foo made/up)))
+                           (is false)
+                           (catch Exception e
+                             e))]
         (is (-> v .getMessage #{"Validation failed"}))
         (is (-> v class #{ExceptionInfo})))))
 

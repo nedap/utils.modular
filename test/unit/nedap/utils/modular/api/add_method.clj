@@ -1,8 +1,8 @@
 (ns unit.nedap.utils.modular.api.add-method
   (:require
    [clojure.test :refer :all]
-   [nedap.utils.modular.api :as sut]
-   [nedap.utils.speced :as speced]))
+   [nedap.speced.def :as speced]
+   [nedap.utils.modular.api :as sut]))
 
 (defmulti handle class)
 
