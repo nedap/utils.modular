@@ -1,6 +1,45 @@
 (ns nedap.utils.modular.impl.implement
   (:require
+   [nedap.speced.def :as speced]
    [nedap.utils.spec.api :refer [check!]]))
+
+;; `org.clojure/clojurescript` is a `:provided` dependency,
+;; and consumer projects may opt to not have it in their classpaths at all:
+(def cljs-available?
+  (try
+    (require '[cljs.analyzer :as analyzer])
+    true
+    (catch Exception _
+      false)))
+
+(when cljs-available?
+  (speced/defn ^::speced/nilable ^symbol? cljs-resolve
+    "Additions over the original CLJS resolve:
+    * symbols don't have to be quoted, allowing arbitrary queries
+    * var metadata is not dropped."
+    [env, ^symbol? sym]
+    (let [[var meta] (try
+                       (let [var (cljs.analyzer/resolve-var env sym (cljs.analyzer/confirm-var-exists-throw))]
+                         [var (cljs.analyzer/var-meta var)])
+                       (catch Throwable t
+                         [(cljs.analyzer/resolve-var env sym) nil]))]
+      (some-> var
+              :name
+              (vary-meta assoc :cljs.analyzer/no-resolve true)
+              (vary-meta merge meta)))))
+
+(def cljs-resolver
+  (if cljs-available?
+    (-> 'cljs-resolve resolve)
+    (fn [& _]
+      (throw (ex-info "Trying to compile cljs code without the clojurescript dependency in the classpath"
+                      {})))))
+
+(speced/defn ^{::speced/spec (complement map?)}
+  do-resolve [^symbol? sym, ^boolean? clj?, ^some? ns, env]
+  (if clj?
+    (some-> (ns-resolve ns env sym))
+    (cljs-resolver env sym)))
 
 (defn protocol-method-var? [v]
   (and (-> v meta :protocol)
@@ -26,25 +65,39 @@
   [ns sym]
   (some->> sym (ns-resolve ns) impl-method-var?))
 
-(defn fully-qualify [ns s]
+(speced/defn fully-qualify [^boolean? clj?
+                            ns
+                            ^symbol? s
+                            env]
   (if (qualified-symbol? s)
     ;; turn 'component/start into 'com.stuartsierra.component/start:
-    (do
-      (check! resolve s)
-      (symbol (resolve s)))
-    (symbol (str ns) (str s))))
+    (let [resolver (fn [s]
+                     (do-resolve s clj? ns env))]
+      (check! resolver s)
+      (symbol (resolver s)))
+    (symbol (if clj?
+              (str ns)
+              (do
+                (check! map? ns)
+                (-> ns
+                    :name
+                    (doto assert)
+                    str)))
+            (str s))))
 
-(defn implement [obj ns kvs]
+(speced/defn implement [^boolean? clj?, obj, ns, ^sequential? kvs, env]
   `(do
      (check! some? ~obj)
-     (doseq [[protocol-symbol# implementation-symbol#] ~(->> kvs
-                                                             (partition 2)
-                                                             (mapv (fn [[x y]]
-                                                                     [(list 'quote x) (list 'quote y)])))]
-       (check! (partial resolves-to-protocol-method? ~ns) protocol-symbol#)
-       (check! (partial resolves-to-implementation-method? ~ns) implementation-symbol#))
+     ~(when clj?
+        `(doseq [[protocol-symbol# implementation-symbol#] ~(->> kvs
+                                                                 (partition 2)
+                                                                 (mapv (fn [[x y]]
+                                                                         [(list 'quote x) (list 'quote y)])))]
+           (check! (partial resolves-to-protocol-method? ~ns) protocol-symbol#)
+           (check! (partial resolves-to-implementation-method? ~ns) implementation-symbol#)))
      (vary-meta ~obj assoc ~@(->> kvs
                                   (partition 2)
                                   (mapv (fn [[x y]]
-                                          [(list 'quote (fully-qualify ns x)) y]))
+                                          [(list 'quote (fully-qualify clj? ns x env))
+                                           y]))
                                   (apply concat)))))

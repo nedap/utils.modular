@@ -1,8 +1,6 @@
 *.bak
 *.class
-*.class
 *.iml
-*.jar
 *.jar
 *.log
 *.orig
@@ -12,16 +10,11 @@
 .*.swp
 .DS_Store
 .eastwood
-.eastwood
-.hg/
-.hgignore
 .idea/
 .nrepl-port
 .rebl/
 .repl
 /.lein-*
-/.lein-*
-/.nrepl-port
 /checkouts
 /classes
 /logs/

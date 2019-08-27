@@ -26,7 +26,15 @@
   [object & methods]
   {:pre [(check! (spec/coll-of ::method-pair :min-count 1) (partition 2 methods)
                  metadata-extension-supported?             *clojure-version*)]}
-  (implement/implement object *ns* methods))
+  (let [clj? (-> &env :ns nil?)
+        caller-ns (if clj?
+                    *ns*
+                    (-> &env :ns))]
+    (implement/implement clj?
+      object
+      caller-ns
+      methods
+      &env)))
 
 (defmacro add-method
   "Installs a new method of multimethod associated with dispatch-value."
