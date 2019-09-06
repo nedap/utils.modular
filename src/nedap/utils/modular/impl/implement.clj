@@ -7,26 +7,26 @@
 ;; and consumer projects may opt to not have it in their classpaths at all:
 (def cljs-available?
   (try
-    (require '[cljs.analyzer :as analyzer])
+    (require '[cljs.analyzer])
     true
     (catch Exception _
       false)))
 
 (when cljs-available?
-  (speced/defn ^::speced/nilable ^symbol? cljs-resolve
-    "Additions over the original CLJS resolve:
-    * symbols don't have to be quoted, allowing arbitrary queries
-    * var metadata is not dropped."
-    [env, ^symbol? sym]
-    (let [[var meta] (try
-                       (let [var (cljs.analyzer/resolve-var env sym (cljs.analyzer/confirm-var-exists-throw))]
-                         [var (cljs.analyzer/var-meta var)])
-                       (catch Throwable t
-                         [(cljs.analyzer/resolve-var env sym) nil]))]
-      (some-> var
-              :name
-              (vary-meta assoc :cljs.analyzer/no-resolve true)
-              (vary-meta merge meta)))))
+  (eval '(speced/defn ^::speced/nilable ^symbol? cljs-resolve
+           "Additions over the original CLJS resolve:
+  * symbols don't have to be quoted, allowing arbitrary queries
+  * var metadata is not dropped."
+           [env, ^symbol? sym]
+           (let [[var meta] (try
+                              (let [var (cljs.analyzer/resolve-var env sym (cljs.analyzer/confirm-var-exists-throw))]
+                                [var (cljs.analyzer/var-meta var)])
+                              (catch Throwable t
+                                [(cljs.analyzer/resolve-var env sym) nil]))]
+             (some-> var
+                     :name
+                     (vary-meta assoc :cljs.analyzer/no-resolve true)
+                     (vary-meta merge meta))))))
 
 (def cljs-resolver
   (if cljs-available?

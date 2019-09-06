@@ -40,7 +40,8 @@ jobs:
 
     - run:
         name: 'Run JVM tests, reporting coverage'
-        command: lein with-profile -dev,+test trampoline cloverage --lcov --junit -o coverage/
+        # `-provided` ensures JVM project consumers don't need the clojurescript dependency.
+        command: lein with-profile -dev,-provided,+test trampoline cloverage --lcov --junit -o coverage/
 
     - store_test_results:
         path: ~/repo/coverage
