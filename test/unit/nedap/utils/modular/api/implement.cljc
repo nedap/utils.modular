@@ -129,7 +129,7 @@
          foo-impl
          foo-alternative-impl)))
 
-  (testing "Specifyicing protocols (and implementations) belonging to other namespaces, their symbols having an alias prefix"
+  (testing "Specifying protocols (and implementations) belonging to other namespaces, their symbols having an alias prefix"
     (is (= 3000
            (example-external-protocol/do-thing (sut/implement {}
                                                  example-external-protocol/do-thing example-external-protocol/do-thing-impl))))))

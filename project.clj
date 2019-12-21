@@ -11,9 +11,6 @@
 
   :min-lein-version "2.0.0"
 
-  :license {:name "EPL-2.0"
-            :url  "https://www.eclipse.org/legal/epl-2.0/"}
-
   :signing {:gpg-key "releases-staffingsolutions@nedap.com"}
 
   :repositories {"releases" {:url      "https://nedap.jfrog.io/nedap/staffing-solutions/"
@@ -57,14 +54,14 @@
                                        [com.nedap.staffing-solutions/utils.spec.predicates "1.1.0"]
                                        [com.stuartsierra/component "0.4.0"]
                                        [com.taoensso/timbre "4.10.0"]
-                                       [criterium "0.4.4"]
-                                       [formatting-stack "1.0.0"]
+                                       [criterium "0.4.5"]
+                                       [formatting-stack "1.0.1"]
                                        [lambdaisland/deep-diff "0.0-29"]
                                        [medley "1.2.0"]
                                        [org.clojure/core.async "0.5.527"]
                                        [org.clojure/math.combinatorics "0.1.1"]
                                        [org.clojure/test.check "0.10.0-alpha3"]
-                                       [org.clojure/tools.namespace "0.3.0-alpha4"]]
+                                       [org.clojure/tools.namespace "0.3.1"]]
                         :plugins      [[lein-cloverage "1.1.1"]]
                         :source-paths ["dev"]
                         :repl-options {:init-ns dev}}
@@ -73,12 +70,19 @@
                                         :exclusions [com.cognitect/transit-clj
                                                      com.google.code.findbugs/jsr305
                                                      com.google.errorprone/error_prone_annotations]]
+                                       [com.google.guava/guava "25.1-jre" #_"transitive"]
+                                       [com.google.protobuf/protobuf-java "3.4.0" #_"transitive"]
                                        [com.cognitect/transit-clj "0.8.313" #_"transitive"]
                                        [com.google.errorprone/error_prone_annotations "2.1.3" #_"transitive"]
                                        [com.google.code.findbugs/jsr305 "3.0.2" #_"transitive"]]}
 
+             :check    {:global-vars  {*unchecked-math* :warn-on-boxed
+                                       ;; avoid warnings that cannot affect production:
+                                       *assert*         false}}
+
              :test     {:dependencies [[com.nedap.staffing-solutions/utils.test "1.6.1"]]
-                        :jvm-opts     ["-Dclojure.core.async.go-checking=true"]}
+                        :jvm-opts     ["-Dclojure.core.async.go-checking=true"
+                                       "-Duser.language=en-US"]}
 
              :ci       {:pedantic?    :abort
                         :jvm-opts     ["-Dclojure.main.report=stderr"]

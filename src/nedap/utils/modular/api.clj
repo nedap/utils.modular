@@ -11,8 +11,8 @@
                                   :function-reference symbol?))
 
 (defn metadata-extension-supported? [clojure-version]
-  (or (-> clojure-version :minor (> 9))
-      (-> clojure-version :major (> 1))))
+  (or (-> clojure-version :minor long (> 9))
+      (-> clojure-version :major long (> 1))))
 
 (defmacro implement
   "Returns a copy of `object` that implements `methods` via metadata (Clojure 1.10 feature).

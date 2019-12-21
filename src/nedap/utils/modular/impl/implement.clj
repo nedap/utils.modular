@@ -38,7 +38,7 @@
 (speced/defn ^{::speced/spec (complement map?)}
   do-resolve [^symbol? sym, ^boolean? clj?, ^some? ns, env]
   (if clj?
-    (some-> (ns-resolve ns env sym))
+    (ns-resolve ns env sym)
     (cljs-resolver env sym)))
 
 (defn protocol-method-var? [v]
