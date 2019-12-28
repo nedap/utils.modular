@@ -1,7 +1,7 @@
 ;; Please don't bump the library version by hand - use ci.release-workflow instead.
 (defproject com.nedap.staffing-solutions/utils.modular "2.1.0-alpha2"
   ;; Please keep the dependencies sorted a-z.
-  :dependencies [[com.nedap.staffing-solutions/speced.def "1.1.1"]
+  :dependencies [[com.nedap.staffing-solutions/speced.def "1.2.0-alpha1"]
                  [com.stuartsierra/component "0.4.0"]
                  [org.clojure/clojure "1.10.1"]]
 
@@ -20,6 +20,7 @@
   :repository-auth {#"https://nedap.jfrog\.io/nedap/staffing-solutions/"
                     {:username :env/artifactory_user
                      :password :env/artifactory_pass}}
+
   :target-path "target/%s"
 
   :test-paths ["src" "test"]
@@ -50,7 +51,6 @@
   ;; NOTE: deps marked with #_"transitive" are there to satisfy the `:pedantic?` option.
   :profiles {:dev      {:dependencies [[cider/cider-nrepl "0.16.0" #_"formatting-stack needs it"]
                                        [com.clojure-goes-fast/clj-java-decompiler "0.2.1"]
-                                       [com.nedap.staffing-solutions/utils.modular "2.0.0"]
                                        [com.nedap.staffing-solutions/utils.spec.predicates "1.1.0"]
                                        [com.stuartsierra/component "0.4.0"]
                                        [com.taoensso/timbre "4.10.0"]
@@ -76,9 +76,9 @@
                                        [com.google.errorprone/error_prone_annotations "2.1.3" #_"transitive"]
                                        [com.google.code.findbugs/jsr305 "3.0.2" #_"transitive"]]}
 
-             :check    {:global-vars  {*unchecked-math* :warn-on-boxed
-                                       ;; avoid warnings that cannot affect production:
-                                       *assert*         false}}
+             :check    {:global-vars {*unchecked-math* :warn-on-boxed
+                                      ;; avoid warnings that cannot affect production:
+                                      *assert*         false}}
 
              :test     {:dependencies [[com.nedap.staffing-solutions/utils.test "1.6.1"]]
                         :jvm-opts     ["-Dclojure.core.async.go-checking=true"

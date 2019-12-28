@@ -1,6 +1,6 @@
 (ns unit.nedap.utils.modular.api.omit-this
   (:require
-   [clojure.test :refer :all]
+   #?(:clj [clojure.test :refer [deftest testing are is use-fixtures]] :cljs [cljs.test :refer-macros [deftest testing is are] :refer [use-fixtures]])
    [nedap.utils.modular.api :as sut]
    [unit.nedap.utils.modular.api.omit-this.example-protocol :as example-protocol]))
 

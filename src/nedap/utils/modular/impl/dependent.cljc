@@ -5,7 +5,8 @@
    [com.stuartsierra.component :as component]
    [nedap.speced.def :as speced]))
 
-(spec/def ::component       #(speced/satisfies? component/Lifecycle %))
+(spec/def ::component       #(#?(:clj  speced/satisfies?
+                                 :cljs satisfies?) component/Lifecycle %))
 (spec/def ::dependency-map  (spec/map-of keyword? keyword?))
 (spec/def ::dependency-vec  (spec/coll-of keyword? :kind vector?))
 

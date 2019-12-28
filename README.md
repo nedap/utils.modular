@@ -1,8 +1,6 @@
 # nedap.utils.modular
 
-Utilities for creating modular systems.
-
-Functions related to Component or protocols will go here.
+Utilities for creating modular systems: functions related to [Component](https://github.com/stuartsierra/component), or protocols.
 
 ## Synopsis
 
@@ -61,7 +59,7 @@ This has multiple advantages:
 
 * One can code with plain defns, making things more homogeneous
   * And decoupled, reusable
-* Said defns can be [utils.spec](https://github.com/nedap/utils.spec/) ones
+* Said defns can be [speced.def](https://github.com/nedap/speced.def) ones
 * Importantly, one should understand that `defmethod` is a side-effect, and as such should be avoided.
   * Better to `add-method` in a [Component](https://github.com/stuartsierra/component) `start` definition
   
@@ -91,6 +89,16 @@ Refer to its test for an example.
 ```clojure
 [com.nedap.staffing-solutions/utils.modular "2.1.0-alpha2"]
 ````
+
+## ClojureScript compatibility
+
+All the offered API is compatible with vanilla ClojureScript (i.e. non-self-compiled).
+
+However, `implement` offers weaker guarantees in its cljs version, since cljs has fewer introspection guarantees, particularly at macroexpansion time.
+
+At the same time, as long as your cljs code is defined as a .cljc file _and_ it is compiled for the two possible targets (JVM, js),
+then the JVM target will provide the guarantees that cljs cannot provide. i.e. cross-compilation can act as a "linter",
+even if only using in production just a single target. 
 
 ## ns organisation
 
