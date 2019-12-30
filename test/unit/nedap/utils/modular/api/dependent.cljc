@@ -10,8 +10,9 @@
        (testing description
          (let [component (sut/dependent {} :on dependencies :renames rename)
                dependency-map (::component/dependencies (meta component))]
-           (= expected
-              dependency-map)))
+           (is (= expected
+                  dependency-map))
+           true))
 
     "Without renames"
     [:a]

@@ -53,10 +53,12 @@
 
   #?(:clj
      (testing "swapped order"
-       (are [impl] (with-out-str
-                     (is (thrown-with-msg? #?(:clj ExceptionInfo
-                                              :cljs js/Error) #"Validation failed" (sut/implement {}
-                                                                                     impl foo))))
+       (are [impl] (do
+                     (with-out-str
+                       (is (thrown-with-msg? #?(:clj  ExceptionInfo
+                                                :cljs js/Error) #"Validation failed" (sut/implement {}
+                                                                                       impl foo))))
+                     true)
 
          foo-impl
          foo-alternative-impl)))
