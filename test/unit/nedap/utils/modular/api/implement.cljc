@@ -4,6 +4,7 @@
    #?(:clj [nedap.utils.modular.api :as sut])
    #?(:clj [clojure.test :refer [deftest testing are is use-fixtures]] :cljs [cljs.test :refer-macros [deftest testing is are] :refer [use-fixtures]])
    [nedap.speced.def :as speced]
+   [nedap.utils.modular.impl.implement :as sut.impl]
    [unit.nedap.utils.modular.api.example-external-protocol :as example-external-protocol])
   #?(:clj (:import (clojure.lang ExceptionInfo)))
   #?(:cljs (:require-macros [nedap.utils.modular.api :as sut])))
@@ -53,36 +54,25 @@
 
   #?(:clj
      (testing "swapped order"
-       (are [impl] (do
-                     (with-out-str
-                       (is (thrown-with-msg? #?(:clj  ExceptionInfo
-                                                :cljs js/Error) #"Validation failed" (sut/implement {}
-                                                                                       impl foo))))
-                     true)
-
+       (are [impl] (spec-assertion-thrown? `sut.impl/protocol-method-var? (sut/implement {}
+                                                                            impl foo))
          foo-impl
          foo-alternative-impl)))
 
   #?(:clj
      (testing "values that don't resolve to a function"
-       (with-out-str
-         (is (thrown-with-msg? #?(:clj  ExceptionInfo
-                                  :cljs js/Error) #"Validation failed" (sut/implement {}
-                                                                         foo not-an-impl))))))
+       (is (spec-assertion-thrown? `sut.impl/impl-method-var? (sut/implement {}
+                                                                foo not-an-impl)))))
 
   #?(:clj
      (testing "made-up symbols"
 
        ;; no `are` here since `eval '` makes it harder to predict what will actually happen
-       (with-out-str
-         (is (thrown-with-msg? #?(:clj  ExceptionInfo
-                                  :cljs js/Error) #"Validation failed" (eval '(nedap.utils.modular.api/implement {}
-                                                                                foo-impl oooooommmmmggggg)))))
+       (is (spec-assertion-thrown? `sut.impl/protocol-method-var? (eval '(nedap.utils.modular.api/implement {}
+                                                                           foo-impl oooooommmmmggggg))))
 
-       (with-out-str
-         (is (thrown-with-msg? #?(:clj  ExceptionInfo
-                                  :cljs js/Error) #"Validation failed" (eval '(nedap.utils.modular.api/implement {}
-                                                                                foo-alternative-impl oooooommmmmggggg)))))))
+       (is (spec-assertion-thrown? `sut.impl/protocol-method-var? (eval '(nedap.utils.modular.api/implement {}
+                                                                           foo-alternative-impl oooooommmmmggggg))))))
 
   (testing "Spurious aliases in either side of the mapping"
     #?(:clj
@@ -91,6 +81,7 @@
        (assert (not (aliased? 'made))))
 
     #?(:clj
+       ;; cant use spec-assertion-thrown? because it throws a CompilerException
        (with-out-str
          (let [#?(:clj  ^Exception v
                   :cljs v) (try
@@ -107,20 +98,10 @@
                                          :cljs js/Error)})))))
 
     #?(:clj
-       (with-out-str
-         (let [#?(:clj  ^Exception v
-                  :cljs v) (try
-                             (eval (list 'do
-                                         (list `in-ns (->> this-ns str symbol (list 'quote)))
-                                         '(nedap.utils.modular.api/implement {}
-                                            foo made/up)))
-                             (is false)
-                             (catch #?(:clj  Exception
-                                       :cljs js/Error) e
-                               e))]
-           (is (-> v .getMessage #{"Validation failed"}))
-           (is (-> v type #{#?(:clj  ExceptionInfo
-                               :cljs js/Error)}))))))
+       (is (spec-assertion-thrown? `sut.impl/impl-method-var? (eval (list 'do
+                                                                          (list `in-ns (->> this-ns str symbol (list 'quote)))
+                                                                          '(nedap.utils.modular.api/implement {}
+                                                                             foo made/up)))))))
 
   #?(:clj
      (testing "Implementing incompatible protocols is prevented"

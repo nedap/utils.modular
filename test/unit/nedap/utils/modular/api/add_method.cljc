@@ -11,18 +11,15 @@
 (speced/defn handle-string [^string? s]
   (str s s))
 
-#?(:clj  (defmulti handle class)
-   :cljs (defmulti handle (fn [x]
-                            (cond
-                              (number? x) ::number
-                              (string? x) ::string
-                              true        (assert false)))))
+(defmulti handle (fn [x]
+                   (cond
+                     (number? x) ::number
+                     (string? x) ::string
+                     true        (assert false))))
 
-#?(:clj  (sut/add-method handle Long handle-integer)
-   :cljs (sut/add-method handle ::number handle-integer))
+(sut/add-method handle ::number handle-integer)
 
-#?(:clj  (sut/add-method handle String handle-string)
-   :cljs (sut/add-method handle ::string handle-string))
+(sut/add-method handle ::string handle-string)
 
 (deftest works
   (are [input e] (= e
