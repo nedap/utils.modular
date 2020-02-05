@@ -5,13 +5,12 @@
    [clojure.pprint :refer [pprint]]
    [clojure.repl :refer [apropos dir doc find-doc pst source]]
    [clojure.test :refer [run-all-tests run-tests]]
-   [clojure.tools.namespace.repl :refer [refresh set-refresh-dirs]]
+   [clojure.tools.namespace.repl :refer [clear refresh refresh-dirs set-refresh-dirs]]
    [criterium.core :refer [quick-bench]]
    [formatting-stack.branch-formatter :refer [format-and-lint-branch! lint-branch!]]
-   [formatting-stack.compilers.test-runner :refer [test!]]
+   [formatting-stack.processors.test-runner :refer [test!]]
    [formatting-stack.project-formatter :refer [format-and-lint-project! lint-project!]]
-   [lambdaisland.deep-diff]
-   [nedap.utils.modular.api :refer :all]))
+   [lambdaisland.deep-diff]))
 
 (set-refresh-dirs "src" "test" "dev")
 

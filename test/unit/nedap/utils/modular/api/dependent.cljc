@@ -1,6 +1,6 @@
 (ns unit.nedap.utils.modular.api.dependent
   (:require
-   [clojure.test :refer :all]
+   #?(:clj [clojure.test :refer [deftest testing are is use-fixtures]] :cljs [cljs.test :refer-macros [deftest testing is are] :refer [use-fixtures]])
    [com.stuartsierra.component :as component]
    [nedap.utils.modular.api :as sut]
    [nedap.utils.modular.impl.dependent :as impl.dependent]))
@@ -10,8 +10,9 @@
        (testing description
          (let [component (sut/dependent {} :on dependencies :renames rename)
                dependency-map (::component/dependencies (meta component))]
-           (= expected
-              dependency-map)))
+           (is (= expected
+                  dependency-map))
+           true))
 
     "Without renames"
     [:a]
