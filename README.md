@@ -1,6 +1,12 @@
-# nedap.utils.modular
+# utils.modular
 
 Utilities for creating modular systems: functions related to [Component](https://github.com/stuartsierra/component), or protocols.
+
+## Installation
+
+```clojure
+[com.nedap.staffing-solutions/utils.modular "2.1.0-alpha3"]
+````
 
 ## Synopsis
 
@@ -60,8 +66,8 @@ This has multiple advantages:
 * One can code with plain defns, making things more homogeneous
   * And decoupled, reusable
 * Said defns can be [speced.def](https://github.com/nedap/speced.def) ones
-* Importantly, one should understand that `defmethod` is a side-effect, and as such should be avoided.
-  * Better to `add-method` in a [Component](https://github.com/stuartsierra/component) `start` definition
+* Importantly, one should understand that `defmethod` is a side-effect, and as such should be controlled.
+  * Better to `add-method` in a [Component](https://github.com/stuartsierra/component) `start` definition.
   
 #### `nedap.utils.modular.api/dependent`
 
@@ -74,7 +80,7 @@ a map with renames. Note that the dependencies can be passed as a vector or a ma
            :renames {:internal ::my-component/external})
 ```
 
-This allows the user to keep using the `dependencies`-def while maintaining the flexibility to rename
+This allows the user to keep using the `my-component/dependencies`-def while maintaining the flexibility to rename
 some keys.
 
 #### `nedap.utils.modular.api/omit-this [f]`
@@ -84,17 +90,11 @@ Apt for protocol extensions, when `f` is an arbitrary function which may not par
 
 Refer to its test for an example.
 
-## Installation
-
-```clojure
-[com.nedap.staffing-solutions/utils.modular "2.1.0-alpha3"]
-````
-
 ## ClojureScript compatibility
 
 All the offered API is compatible with vanilla ClojureScript (i.e. non-self-compiled).
 
-However, `implement` offers weaker guarantees in its cljs version, since cljs has fewer introspection guarantees, particularly at macroexpansion time.
+However, `implement` offers weaker guarantees in its cljs version, since cljs has fewer introspection capabilities, particularly at macroexpansion time.
 
 At the same time, as long as your cljs code is defined as a .cljc file _and_ it is compiled for the two possible targets (JVM, js),
 then the JVM target will provide the guarantees that cljs cannot provide. i.e. cross-compilation can act as a "linter",
@@ -115,3 +115,5 @@ Please browse the public namespaces, which are documented, speced and tested.
 ## License
 
 Copyright © Nedap
+
+This program and the accompanying materials are made available under the terms of the [Eclipse Public License 2.0](https://www.eclipse.org/legal/epl-2.0).
