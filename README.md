@@ -5,7 +5,7 @@ Utilities for creating modular systems: functions related to [Component](https:/
 ## Installation
 
 ```clojure
-[com.nedap.staffing-solutions/utils.modular "2.1.0-alpha3"]
+[com.nedap.staffing-solutions/utils.modular "2.1.0"]
 ````
 
 ## Synopsis
