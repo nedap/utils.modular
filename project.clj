@@ -83,7 +83,8 @@
                                                      com.google.errorprone/error_prone_annotations]]
                                        [com.google.guava/guava "25.1-jre" #_"transitive"]
                                        [com.google.protobuf/protobuf-java "3.4.0" #_"transitive"]
-                                       [com.cognitect/transit-clj "0.8.313" #_"transitive"]
+                                       [com.cognitect/transit-clj "0.8.319" #_"transitive"]
+                                       [com.fasterxml.jackson.core/jackson-core "2.9.6"]
                                        [com.google.errorprone/error_prone_annotations "2.1.3" #_"transitive"]
                                        [com.google.code.findbugs/jsr305 "3.0.2" #_"transitive"]]}
 
