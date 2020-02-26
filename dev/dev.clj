@@ -12,7 +12,8 @@
    [formatting-stack.project-formatter :refer [format-and-lint-project! lint-project!]]
    [lambdaisland.deep-diff]))
 
-(set-refresh-dirs "src" "test" "dev")
+(set-refresh-dirs "src" "dev" "test")
+
 
 (defn suite []
   (refresh)
