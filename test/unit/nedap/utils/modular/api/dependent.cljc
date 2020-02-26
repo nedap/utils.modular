@@ -39,5 +39,6 @@
     {:c :d}
     {:a :b :c :d})
 
-  (testing "Wrong keys in options"
-    (is (spec-assertion-thrown? ::impl.dependent/options (sut/dependent {} :on {} :reneames {})))))
+  (when *assert*
+    (testing "Wrong keys in options"
+      (is (spec-assertion-thrown? ::impl.dependent/options (sut/dependent {} :on {} :reneames {}))))))
