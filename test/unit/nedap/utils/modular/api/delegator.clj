@@ -2,12 +2,15 @@
   (:require
    [clojure.test :refer [deftest is testing]]
    [nedap.speced.def :as speced]
-   [nedap.utils.modular.api :refer [implement] :as sut]))
+   [nedap.utils.modular.api :as sut :refer [implement]]))
 
 (speced/defprotocol Protocol
   "Protocol with 2 functions used in testing"
-  (fn-1 [this] "first function")
-  (fn-2 [this] "second function"))
+  (fn-1 [this]
+    "first function")
+
+  (fn-2 [this]
+    "second function"))
 
 (defn make-record-call
   [fn-name]
@@ -28,13 +31,13 @@
     --fn-1 record-fn-1
     --fn-2 record-fn-2))
 
-(speced/defn ^long get-call-count [{::keys [^some? call-record]}, ^symbol? fn-name]
+(speced/defn ^number? get-call-count [{::keys [^some? call-record]}, ^symbol? fn-name]
   (get @call-record fn-name 0))
 
 (deftest works
   (let [target    (new-target)
         delegator (-> (sut/delegate {} :to target
-                               --fn-1 record-fn-1)
+                        --fn-1 record-fn-1)
                       (merge {::call-record (atom {})}))]
     (testing "target methods work on delegator"
       (is (fn-1 delegator))
@@ -61,8 +64,8 @@
 
     (testing "proxying using ::delegator/target"
       (let [proxy (-> (sut/delegate {} :to target
-                               --fn-1 proxy-fn-1)
-                      (merge {::call-record (atom {})}))
+                        --fn-1 proxy-fn-1)
+                    (merge {::call-record (atom {})}))
             proxy-count  (get-call-count proxy 'fn-1)
             target-count (get-call-count target 'fn-1)]
 
@@ -74,7 +77,7 @@
 
     (testing "nesting delegators"
       (let [nested (-> (sut/delegate {} :to delegator
-                                --fn-1 proxy-fn-1)
+                         --fn-1 proxy-fn-1)
                        (merge {::call-record (atom {})}))]
         (testing "calling non-delegated methods"
           (let [nested-count    (get-call-count nested 'fn-2)
