@@ -10,7 +10,8 @@
 #?(:clj (def cljs-available?
           (try
             (require '[cljs.analyzer])
-            true
+            ;; Ensure clojurescript is recent enough:
+            (-> 'cljs.analyzer/var-meta resolve boolean)
             (catch Exception _
               false))))
 

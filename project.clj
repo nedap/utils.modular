@@ -62,7 +62,7 @@
                                        [com.stuartsierra/component "0.4.0"]
                                        [com.taoensso/timbre "4.10.0"]
                                        [criterium "0.4.5"]
-                                       [formatting-stack "3.2.0"]
+                                       [formatting-stack "4.2.3"]
                                        [lambdaisland/deep-diff "0.0-29"]
                                        [medley "1.2.0"]
                                        [org.clojure/core.async "1.0.567"]
@@ -71,15 +71,19 @@
                                        [org.clojure/tools.namespace "1.0.0"]
                                        [refactor-nrepl "2.4.0" #_"formatting-stack needs it"]]
                         :jvm-opts     ["-Dclojure.compiler.disable-locals-clearing=true"]
-                        :plugins      [[lein-cloverage "1.1.1"]]
                         :source-paths ["dev"]
                         :repl-options {:init-ns dev}}
+
+             :cljs-old {:dependencies [[org.clojure/clojurescript "1.7.228"
+                                        :exclusions [com.cognitect/transit-clj
+                                                     com.google.code.findbugs/jsr305
+                                                     com.google.errorprone/error_prone_annotations]]]}
 
              :provided {:dependencies [[org.clojure/clojurescript "1.10.597"
                                         :exclusions [com.cognitect/transit-clj
                                                      com.google.code.findbugs/jsr305
                                                      com.google.errorprone/error_prone_annotations]]
-                                       [com.fasterxml.jackson.core/jackson-core "2.9.6" #_"transitive"]
+                                       [com.fasterxml.jackson.core/jackson-core "2.10.2" #_"transitive"]
                                        [com.google.guava/guava "25.1-jre" #_"transitive"]
                                        [com.google.protobuf/protobuf-java "3.4.0" #_"transitive"]
                                        [com.cognitect/transit-clj "0.8.313" #_"transitive"]
@@ -100,13 +104,14 @@
              :jdk11      {:dependencies [[javax.xml.bind/jaxb-api "2.3.1"]
                                          [org.glassfish.jaxb/jaxb-runtime "2.3.1"]]}
 
-             :test     {:dependencies [[com.nedap.staffing-solutions/utils.test "1.6.2"]]
+             :test     {:dependencies [[com.nedap.staffing-solutions/utils.test "1.6.2"]
+                                       [org.clojure/tools.reader "1.3.3" #_"transitive"]]
+                        :plugins      [[lein-cloverage "1.1.1"]]
                         :jvm-opts     ["-Dclojure.core.async.go-checking=true"
                                        "-Duser.language=en-US"]}
 
-             :ci       {:pedantic?    :abort
-                        :jvm-opts     ["-Dclojure.main.report=stderr"]
-                        :global-vars  {*assert* true} ;; `ci.release-workflow` relies on runtime assertions
-                        :dependencies [[com.nedap.staffing-solutions/ci.release-workflow "1.7.0-alpha3"]]}
+             :ncrw       {:global-vars  {*assert* true} ;; `ci.release-workflow` relies on runtime assertions
+                          :dependencies [[com.nedap.staffing-solutions/ci.release-workflow "1.11.0"]]}
 
-})
+             :ci       {:pedantic?    :abort
+                        :jvm-opts     ["-Dclojure.main.report=stderr"]}})
