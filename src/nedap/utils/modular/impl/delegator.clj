@@ -2,8 +2,8 @@
   (:require
    [clojure.set :as set]
    [clojure.spec.alpha :as spec]
-   [nedap.speced.def :as speced]
    [com.stuartsierra.component :as component]
+   [nedap.speced.def :as speced]
    [nedap.utils.spec.api :refer [check!]]))
 
 (speced/defn ^boolean? component? [x]

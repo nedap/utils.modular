@@ -56,57 +56,55 @@
   ;;   * e.g. criterium, deep-diff, clj-java-decompiler
 
   ;; NOTE: deps marked with #_"transitive" are there to satisfy the `:pedantic?` option.
-  :profiles {:dev      {:dependencies [[cider/cider-nrepl "0.16.0" #_"formatting-stack needs it"]
-                                       [com.clojure-goes-fast/clj-java-decompiler "0.2.1"]
-                                       [com.nedap.staffing-solutions/utils.spec.predicates "1.1.0"]
-                                       [com.stuartsierra/component "0.4.0"]
-                                       [com.taoensso/timbre "4.10.0"]
-                                       [criterium "0.4.5"]
-                                       [formatting-stack "3.2.0"]
-                                       [lambdaisland/deep-diff "0.0-29"]
-                                       [medley "1.2.0"]
-                                       [org.clojure/core.async "1.0.567"]
-                                       [org.clojure/math.combinatorics "0.1.1"]
-                                       [org.clojure/test.check "1.0.0"]
-                                       [org.clojure/tools.namespace "1.0.0"]
-                                       [refactor-nrepl "2.4.0" #_"formatting-stack needs it"]]
-                        :jvm-opts     ["-Dclojure.compiler.disable-locals-clearing=true"]
-                        :plugins      [[lein-cloverage "1.1.1"]]
-                        :source-paths ["dev"]
-                        :repl-options {:init-ns dev}}
+  :profiles {:dev        {:dependencies [[cider/cider-nrepl "0.16.0" #_"formatting-stack needs it"]
+                                         [com.clojure-goes-fast/clj-java-decompiler "0.2.1"]
+                                         [com.nedap.staffing-solutions/utils.spec.predicates "1.1.0"]
+                                         [com.stuartsierra/component "0.4.0"]
+                                         [com.taoensso/timbre "4.10.0"]
+                                         [criterium "0.4.5"]
+                                         [formatting-stack "4.0.0"]
+                                         [lambdaisland/deep-diff "0.0-29"]
+                                         [medley "1.2.0"]
+                                         [org.clojure/core.async "1.0.567"]
+                                         [org.clojure/math.combinatorics "0.1.1"]
+                                         [org.clojure/test.check "1.0.0"]
+                                         [org.clojure/tools.namespace "1.0.0"]
+                                         [refactor-nrepl "2.4.0" #_"formatting-stack needs it"]]
+                          :jvm-opts     ["-Dclojure.compiler.disable-locals-clearing=true"]
+                          :plugins      [[lein-cloverage "1.1.1"]]
+                          :source-paths ["dev"]
+                          :repl-options {:init-ns dev}}
 
-             :provided {:dependencies [[org.clojure/clojurescript "1.10.597"
-                                        :exclusions [com.cognitect/transit-clj
-                                                     com.google.code.findbugs/jsr305
-                                                     com.google.errorprone/error_prone_annotations]]
-                                       [com.fasterxml.jackson.core/jackson-core "2.9.6" #_"transitive"]
-                                       [com.google.guava/guava "25.1-jre" #_"transitive"]
-                                       [com.google.protobuf/protobuf-java "3.4.0" #_"transitive"]
-                                       [com.cognitect/transit-clj "0.8.313" #_"transitive"]
-                                       [com.google.errorprone/error_prone_annotations "2.1.3" #_"transitive"]
-                                       [com.google.code.findbugs/jsr305 "3.0.2" #_"transitive"]]}
+             :provided   {:dependencies [[org.clojure/clojurescript "1.10.597"
+                                          :exclusions [com.cognitect/transit-clj
+                                                       com.google.code.findbugs/jsr305
+                                                       com.google.errorprone/error_prone_annotations]]
+                                         [com.fasterxml.jackson.core/jackson-core "2.9.6" #_"transitive"]
+                                         [com.google.guava/guava "25.1-jre" #_"transitive"]
+                                         [com.google.protobuf/protobuf-java "3.4.0" #_"transitive"]
+                                         [com.cognitect/transit-clj "0.8.313" #_"transitive"]
+                                         [com.google.errorprone/error_prone_annotations "2.1.3" #_"transitive"]
+                                         [com.google.code.findbugs/jsr305 "3.0.2" #_"transitive"]]}
 
-             :check    {:global-vars  {*unchecked-math* :warn-on-boxed
-                                       ;; avoid warnings that cannot affect production:
-                                       *assert*         false}}
+             :check      {:global-vars {*unchecked-math* :warn-on-boxed
+                                        ;; avoid warnings that cannot affect production:
+                                        *assert*         false}}
 
              ;; some settings recommended for production applications.
              ;; You may also add :test, but beware of doing that if using this profile while running tests in CI.
-             :production {:jvm-opts ["-Dclojure.compiler.elide-meta=[:doc :file :author :line :column :added :deprecated :nedap.speced.def/spec :nedap.speced.def/nilable]"
-                                     "-Dclojure.compiler.direct-linking=true"]
+             :production {:jvm-opts    ["-Dclojure.compiler.elide-meta=[:doc :file :author :line :column :added :deprecated :nedap.speced.def/spec :nedap.speced.def/nilable]"
+                                        "-Dclojure.compiler.direct-linking=true"]
                           :global-vars {*assert* false}}
 
              ;; this profile is necessary since JDK >= 11 removes XML Bind, used by Jackson, which is a very common dep.
              :jdk11      {:dependencies [[javax.xml.bind/jaxb-api "2.3.1"]
                                          [org.glassfish.jaxb/jaxb-runtime "2.3.1"]]}
 
-             :test     {:dependencies [[com.nedap.staffing-solutions/utils.test "1.6.2"]]
-                        :jvm-opts     ["-Dclojure.core.async.go-checking=true"
-                                       "-Duser.language=en-US"]}
+             :test       {:dependencies [[com.nedap.staffing-solutions/utils.test "1.6.2"]]
+                          :jvm-opts     ["-Dclojure.core.async.go-checking=true"
+                                         "-Duser.language=en-US"]}
 
-             :ci       {:pedantic?    :abort
-                        :jvm-opts     ["-Dclojure.main.report=stderr"]
-                        :global-vars  {*assert* true} ;; `ci.release-workflow` relies on runtime assertions
-                        :dependencies [[com.nedap.staffing-solutions/ci.release-workflow "1.7.0-alpha3"]]}
-
-})
+             :ci         {:pedantic?    :abort
+                          :jvm-opts     ["-Dclojure.main.report=stderr"]
+                          :global-vars  {*assert* true} ;; `ci.release-workflow` relies on runtime assertions
+                          :dependencies [[com.nedap.staffing-solutions/ci.release-workflow "1.7.0-alpha3"]]}})

@@ -2,10 +2,10 @@
   (:require
    #?(:clj [nedap.utils.modular.impl.defmethod :refer [clj-defmethod-source cljs-defmethod-source]])
    #?(:clj [nedap.utils.modular.impl.implement :as implement])
+   #?(:clj [nedap.utils.modular.impl.delegator :as delegator])
    [clojure.repl]
    [clojure.spec.alpha :as spec]
    [nedap.utils.modular.impl.dependent :as dependent]
-   [nedap.utils.modular.impl.delegator :as delegator]
    [nedap.utils.spec.api :refer [check!]]))
 
 (spec/def ::method-pair (spec/cat :protocol-method    symbol?
@@ -70,18 +70,18 @@
     (apply f args)))
 
 #?(:clj
-    (defmacro delegate
-      "Returns `this` with all methods of `target` + `delegator-methods`.
+   (defmacro delegate
+     "Returns `this` with all methods of `target` + `delegator-methods`.
 
-note:
- - non-overwritten methods receive `target` (instead of `this`) when called.
- - `this` can access `target` through ::target"
-      {:style/indent 3}
-      [delegator _ target & delegator-methods]
-      {:pre [(check! some? delegator
-                     #{:to} _
-                     some? target
-                     (spec/coll-of ::method-pair :min-count 1) (partition 2 delegator-methods))]}
-      `(-> (implement (assoc ~delegator ::target ~target)
-             ~@delegator-methods)
-           (delegator/proxy-undelegated-fns *ns*))))
+  note:
+  - non-overwritten methods receive `target` (instead of `this`) when called.
+  - `this` can access `target` through ::target"
+     {:style/indent 3}
+     [delegator _ target & delegator-methods]
+     {:pre [(check! some?                                     delegator
+                    #{:to}                                    _
+                    some?                                     target
+                    (spec/coll-of ::method-pair :min-count 1) (partition 2 delegator-methods))]}
+     `(-> (implement (assoc ~delegator ::target ~target)
+            ~@delegator-methods)
+          (delegator/proxy-undelegated-fns *ns*))))

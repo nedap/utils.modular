@@ -72,12 +72,12 @@ jobs:
     executor: openjdk8-node
     steps:
       - setup-env
-#      - run:
-#          name: 'Compile ClojureScript test suite'
-#          command: lein with-profile -dev,+test do clean, cljsbuild once test
-#      - run:
-#          name: 'Run node.js tests'
-#          command: node target/out/tests.js
+      - run:
+          name: 'Compile ClojureScript test suite'
+          command: lein with-profile -dev,+test do clean, cljsbuild once test
+      - run:
+          name: 'Run node.js tests'
+          command: node target/out/tests.js
   deploy:
     executor: openjdk8
     steps:
