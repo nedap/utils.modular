@@ -75,6 +75,11 @@
                           :source-paths ["dev"]
                           :repl-options {:init-ns dev}}
 
+             :cljs-old   {:dependencies [[org.clojure/clojurescript "1.7.228"
+                                          :exclusions [com.cognitect/transit-clj
+                                                       com.google.code.findbugs/jsr305
+                                                       com.google.errorprone/error_prone_annotations]]]}
+
              :provided   {:dependencies [[org.clojure/clojurescript "1.10.597"
                                           :exclusions [com.cognitect/transit-clj
                                                        com.google.code.findbugs/jsr305
