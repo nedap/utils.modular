@@ -54,8 +54,9 @@
 
   #?(:clj
      (testing "swapped order"
-       (are [impl] (spec-assertion-thrown? `sut.impl/protocol-method-var? (sut/implement {}
-                                                                            impl foo))
+       (are [impl] (spec-assertion-thrown? #{#'unit.nedap.utils.modular.api.implement/bar #'unit.nedap.utils.modular.api.implement/foo}
+                                           (sut/implement {}
+                                             impl foo))
          foo-impl
          foo-alternative-impl)))
 
@@ -68,11 +69,13 @@
      (testing "made-up symbols"
 
        ;; no `are` here since `eval '` makes it harder to predict what will actually happen
-       (is (spec-assertion-thrown? `sut.impl/protocol-method-var? (eval '(nedap.utils.modular.api/implement {}
-                                                                           foo-impl oooooommmmmggggg))))
+       (is (spec-assertion-thrown? #{#'unit.nedap.utils.modular.api.implement/bar #'unit.nedap.utils.modular.api.implement/foo}
+                                   (eval '(nedap.utils.modular.api/implement {}
+                                            foo-impl oooooommmmmggggg))))
 
-       (is (spec-assertion-thrown? `sut.impl/protocol-method-var? (eval '(nedap.utils.modular.api/implement {}
-                                                                           foo-alternative-impl oooooommmmmggggg))))))
+       (is (spec-assertion-thrown? #{#'unit.nedap.utils.modular.api.implement/bar #'unit.nedap.utils.modular.api.implement/foo}
+                                   (eval '(nedap.utils.modular.api/implement {}
+                                            foo-alternative-impl oooooommmmmggggg))))))
 
   (testing "Spurious aliases in either side of the mapping"
     #?(:clj
@@ -93,9 +96,9 @@
                              (catch #?(:clj  Exception
                                        :cljs js/Error) e
                                e))]
-           (is (-> v .getCause .getMessage #{"Validation failed"}))
-           (is (-> v .getCause type #{#?(:clj  ExceptionInfo
-                                         :cljs js/Error)})))))
+           (is (-> v ex-cause ex-message #{"Validation failed"}))
+           (is (-> v ex-cause type #{#?(:clj  ExceptionInfo
+                                        :cljs js/Error)})))))
 
     #?(:clj
        (is (spec-assertion-thrown? `sut.impl/impl-method-var? (eval (list 'do

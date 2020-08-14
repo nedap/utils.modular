@@ -42,16 +42,13 @@
             (ns-resolve ns-name env sym)
             (cljs-resolver env sym))))
 
-(defn protocol-method-var?
-  "Is `@v` a function that is an abstract protocol method?"
-  [v]
-  (and (-> v meta :protocol)
-       (-> v deref fn?)
-       (let [{:keys [on] :as protocol} (-> v meta :protocol deref)]
-         (if (-> protocol :extend-via-metadata)
-           true
-           (throw (ex-info "The targeted protocol does not have `:extend-via-metadata` activated."
-                           {:protocol on}))))))
+(defn ns-protocol-method-vars
+  "Returns a set of every abstract protocol in `ns`"
+  [ns]
+  (->> (ns-publics ns)
+       (filter (comp :protocol meta second))
+       (map second)
+       (set)))
 
 (defn impl-method-var?
   "Is `@v` a function that is not an abstract protocol method?"
@@ -88,8 +85,13 @@
                 `(doseq [[protocol-symbol# implementation-symbol#] ~(->> kvs
                                                                          (partition 2)
                                                                          (mapv (fn [[x y]]
-                                                                                 [(list 'quote x) (list 'quote y)])))]
-                   (check! protocol-method-var? (ns-resolve ~ns protocol-symbol#))
+                                                                                 [(list 'quote x) (list 'quote y)])))
+                         :let [protocol-var#      (ns-resolve ~ns protocol-symbol#)
+                               all-protocol-vars# (ns-protocol-method-vars (-> protocol-var# meta :ns))]]
+                   (check! all-protocol-vars# protocol-var#)
+                   (when-not (-> protocol-var# meta :protocol deref :extend-via-metadata)
+                     (throw (ex-info "The targeted protocol does not have `:extend-via-metadata` activated."
+                                     {:protocol (-> protocol-var# meta :protocol symbol)})))
                    (check! impl-method-var? (ns-resolve ~ns implementation-symbol#))))
              (vary-meta ~obj assoc ~@(->> kvs
                                           (partition 2)
