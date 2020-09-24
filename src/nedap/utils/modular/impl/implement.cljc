@@ -1,5 +1,6 @@
 (ns nedap.utils.modular.impl.implement
   (:require
+   [clojure.spec.alpha :as spec]
    [nedap.speced.def :as speced]
    [nedap.utils.spec.api :refer [check!]])
   #?(:clj (:import (clojure.lang MultiFn))))
@@ -42,13 +43,14 @@
             (ns-resolve ns-name env sym)
             (cljs-resolver env sym))))
 
-(defn ns-protocol-method-vars
-  "Returns a set of every abstract protocol in `ns`"
+(speced/defn ^{::speced/spec (spec/coll-of var? :kind set?)} ns-protocol-method-vars
   [ns]
-  (->> (ns-publics ns)
-       (filter (comp :protocol meta second))
-       (map second)
-       (set)))
+  (into #{}
+        (comp (map val)
+              (filter (comp :protocol meta))
+              (filter (comp #{ns} #(.ns %)))
+              (filter (comp fn? deref)))
+        (ns-map ns)))
 
 (defn impl-method-var?
   "Is `@v` a function that is not an abstract protocol method?"

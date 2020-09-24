@@ -54,7 +54,7 @@
 
   #?(:clj
      (testing "swapped order"
-       (are [impl] (spec-assertion-thrown? #{#'unit.nedap.utils.modular.api.implement/bar #'unit.nedap.utils.modular.api.implement/foo}
+       (are [impl] (spec-assertion-thrown? #{#'bar #'foo}
                                            (sut/implement {}
                                              impl foo))
          foo-impl
@@ -69,12 +69,12 @@
      (testing "made-up symbols"
 
        ;; no `are` here since `eval '` makes it harder to predict what will actually happen
-       (is (spec-assertion-thrown? #{#'unit.nedap.utils.modular.api.implement/bar #'unit.nedap.utils.modular.api.implement/foo}
-                                   (eval '(nedap.utils.modular.api/implement {}
+       (is (spec-assertion-thrown? #{#'bar #'foo}
+                                   (eval `(nedap.utils.modular.api/implement {}
                                             foo-impl oooooommmmmggggg))))
 
-       (is (spec-assertion-thrown? #{#'unit.nedap.utils.modular.api.implement/bar #'unit.nedap.utils.modular.api.implement/foo}
-                                   (eval '(nedap.utils.modular.api/implement {}
+       (is (spec-assertion-thrown? #{#'bar #'foo}
+                                   (eval `(nedap.utils.modular.api/implement {}
                                             foo-alternative-impl oooooommmmmggggg))))))
 
   (testing "Spurious aliases in either side of the mapping"
