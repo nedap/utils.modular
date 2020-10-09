@@ -3,7 +3,7 @@
    [clojure.spec.alpha :as spec]
    [nedap.speced.def :as speced]
    [nedap.utils.spec.api :refer [check!]])
-  #?(:clj (:import (clojure.lang MultiFn))))
+  #?(:clj (:import (clojure.lang MultiFn Var))))
 
 ;; `org.clojure/clojurescript` is a `:provided` dependency,
 ;; and consumer projects may opt to not have it in their classpaths at all:
@@ -44,14 +44,13 @@
             (ns-resolve ns-name env sym)
             (cljs-resolver env sym))))
 
-(speced/defn ^{::speced/spec (spec/coll-of var? :kind set?)} ns-protocol-method-vars
-  [ns]
-  (into #{}
-        (comp (map val)
-              (filter (comp :protocol meta))
-              (filter (comp #{ns} #(.ns %)))
-              (filter (comp fn? deref)))
-        (ns-map ns)))
+#?(:clj (speced/defn ^{::speced/spec (spec/coll-of var? :kind set?)} ns-protocol-method-vars [ns-name]
+          (into #{}
+                (comp (map val)
+                      (filter (comp :protocol meta))
+                      (filter (comp #{ns-name} #(.ns ^Var %)))
+                      (filter (comp fn? deref)))
+                (ns-map ns-name))))
 
 (defn impl-method-var?
   "Is `@v` a function that is not an abstract protocol method?"
