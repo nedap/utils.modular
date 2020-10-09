@@ -39,5 +39,7 @@
     {:c :d}
     {:a :b :c :d})
 
-  (testing "Wrong keys in options"
-    (is (spec-assertion-thrown? ::impl.dependent/options (sut/dependent {} :on {} :reneames {})))))
+  (when #?(:clj *assert*
+           :cljs true)
+    (testing "Wrong keys in options"
+      (is (spec-assertion-thrown? ::impl.dependent/options (sut/dependent {} :on {} :reneames {}))))))

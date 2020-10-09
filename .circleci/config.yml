@@ -9,36 +9,69 @@ commands:
             - v1-dependencies-{{ checksum "project.clj" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run: lein with-profile -dev,+test,+ci deps
+      - run: lein with-profile -dev,+test,+ncrw,+ci deps
       - save_cache:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "project.clj" }}
 
+executor_defaults: &executor_defaults
+  working_directory: ~/repo
+
 executors:
-  lein-executor:
+  openjdk8:
     docker:
-      - image: circleci/clojure:openjdk-8-lein-2.9.1-node
-    working_directory: ~/repo
+      - image: circleci/clojure:openjdk-8-lein-2.9.1
     environment:
       LEIN_ROOT: "true"
       JVM_OPTS: -Xmx3200m
+    <<: *executor_defaults
+  openjdk8-node:
+    docker:
+      - image: circleci/clojure:openjdk-8-lein-2.9.1-node
+    environment:
+      LEIN_ROOT: "true"
+      JVM_OPTS: -Xmx3200m
+    <<: *executor_defaults
+  openjdk11:
+    docker:
+      - image: circleci/clojure:openjdk-11-lein-2.9.1
+    environment:
+      LEIN_ROOT: "true"
+      JVM_OPTS: -Xmx3200m --illegal-access=deny
+    <<: *executor_defaults
 
 jobs:
-  build:
-    executor: lein-executor
+  test_code:
+    description: |
+      Runs tests against given version of the JDK
+    parameters:
+      jdk_version:
+        description: Version of the JDK to test against
+        type: string
+      lein_test_command:
+        description: A Leiningen command that will run a test suite
+        type: string
+    executor: << parameters.jdk_version >>
+    steps:
+      - setup-env
+      - run:
+          command: << parameters.lein_test_command >>
+  cloverage:
+    executor: openjdk8
     steps:
       - setup-env
       - run:
           name: 'Run JVM tests, reporting coverage'
-          command: lein with-profile -dev,+test trampoline cloverage --lcov --junit -o coverage/
-      - run:
-          name: 'Ensure artifact isolation, inform of boxed math'
-          command: lein with-profile -dev,+check check
+          command: lein with-profile -dev,+test,+ci trampoline cloverage --lcov --junit -o coverage/
       - store_test_results:
           path: ~/repo/coverage
       - store_artifacts:
           path: ~/repo/coverage
+  test_cljs_code:
+    executor: openjdk8-node
+    steps:
+      - setup-env
       - run:
           name: 'Compile ClojureScript test suite'
           command: lein with-profile -dev,+test do clean, cljsbuild once test
@@ -46,7 +79,7 @@ jobs:
           name: 'Run node.js tests'
           command: node target/out/tests.js
   deploy:
-    executor: lein-executor
+    executor: openjdk8
     steps:
       - setup-env
       - run:
@@ -54,7 +87,7 @@ jobs:
           command: echo -e "$GPG_KEY_V2" | gpg --import
       - run:
           name: Perform pre-release sanity check
-          command: lein with-profile -dev,+ci run -m nedap.ci.release-workflow.api sanity-check
+          command: lein with-profile -dev,+ci,+ncrw run -m nedap.ci.release-workflow.api sanity-check
       - run:
           name: release to JFrog
           command: lein deploy
@@ -62,21 +95,87 @@ jobs:
           name: release to Clojars
           command: lein deploy clojars          
 
+test_code_filters: &test_code_filters
+  filters:
+    branches:
+      only: /.*/
+    tags:
+      only: /^v\d+\.\d+\.\d+(-alpha\d+)?$/
+
 workflows:
-  version: 2
+  version: 2.1
   CircleCI:
     jobs:
-      - build:
+      - test_code:
+          name: "Ensure artifact isolation, inform of boxed math"
+          jdk_version: openjdk8
+          lein_test_command: lein with-profile -dev,+check check
           context: JFrog
-          filters:
-            branches:
-              only: /.*/
-            tags:
-              only: /^v\d+\.\d+\.\d+(-alpha\d+)?$/
+          <<: *test_code_filters
+      - cloverage:
+          requires:
+            - "Ensure artifact isolation, inform of boxed math"
+          context: JFrog
+          <<: *test_code_filters
+      - test_cljs_code:
+          context: JFrog
+          <<: *test_code_filters
+      - test_code:
+          name: "JDK 8, plain"
+          jdk_version: openjdk8
+          lein_test_command: lein with-profile -dev,+ci do clean, test
+          requires:
+            - "Ensure artifact isolation, inform of boxed math"
+            - cloverage
+          context: JFrog
+          <<: *test_code_filters
+      - test_code:
+          name: "JDK 8, with an old clojurescript dependency on the classpath"
+          jdk_version: openjdk8
+          lein_test_command: lein with-profile -dev,-provided,+ci,+cljs-old do clean, test
+          requires:
+            - "Ensure artifact isolation, inform of boxed math"
+            - cloverage
+          context: JFrog
+          <<: *test_code_filters
+      - test_code:
+          name: "JDK 8, with production-like compiler flags"
+          jdk_version: openjdk8
+          lein_test_command: lein with-profile -dev,+ci,+production do clean, test
+          requires:
+            - "Ensure artifact isolation, inform of boxed math"
+            - cloverage
+          context: JFrog
+          <<: *test_code_filters
+      - test_code:
+          name: "JDK 11, plain"
+          jdk_version: openjdk11
+          lein_test_command: lein with-profile -dev,+ci,+jdk11 do clean, test
+          requires:
+            - "Ensure artifact isolation, inform of boxed math"
+            - cloverage
+          context: JFrog
+          <<: *test_code_filters
+      - test_code:
+          name: "JDK 11, with production-like compiler flags"
+          jdk_version: openjdk11
+          lein_test_command: lein with-profile -dev,+ci,+jdk11,+production do clean, test
+          requires:
+            - "Ensure artifact isolation, inform of boxed math"
+            - cloverage
+          context: JFrog
+          <<: *test_code_filters
       - deploy:
           context: JFrog
           requires:
-            - build
+            - "Ensure artifact isolation, inform of boxed math"
+            - test_cljs_code
+            - cloverage
+            - "JDK 8, plain"
+            - "JDK 8, with an old clojurescript dependency on the classpath"
+            - "JDK 8, with production-like compiler flags"
+            - "JDK 11, plain"
+            - "JDK 11, with production-like compiler flags"
           filters:
             branches:
               ignore: /.*/
