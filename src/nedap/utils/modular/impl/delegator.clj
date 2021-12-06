@@ -38,7 +38,7 @@
        (set)))
 
 (speced/defn ^map? proxy-undelegated-fns
-  "Wraps all undelegated functions on `this` so that the first argument is `target` instead of `this`"
+  "Proxies all undelegated functions on `this` to `target`, so that the first argument is `target` instead of `this`"
   [{:nedap.utils.modular.api/keys [^some? target] :as ^map? this} ns]
   (->> [target this]
        (map (partial extract-protocol-fns ns))
