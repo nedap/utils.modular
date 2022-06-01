@@ -102,7 +102,6 @@ workflows:
           lein_test_command: lein with-profile -dev,+ci,+jdk11 do clean, test
           requires:
             - "Ensure artifact isolation, inform of boxed math"
-            - cloverage
           context: Github
           <<: *test_code_filters
       - test_code:
@@ -110,7 +109,6 @@ workflows:
           lein_test_command: lein with-profile -dev,+ci,+jdk11,+production do clean, test
           requires:
             - "Ensure artifact isolation, inform of boxed math"
-            - cloverage
           context: Github
           <<: *test_code_filters
       - deploy:
