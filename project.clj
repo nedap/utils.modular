@@ -87,16 +87,12 @@
                                      "-Dclojure.compiler.direct-linking=true"]
                           :global-vars {*assert* false}}
 
-             ;; this profile is necessary since JDK >= 11 removes XML Bind, used by Jackson, which is a very common dep.
-             :jdk11      {:dependencies [[javax.xml.bind/jaxb-api "2.3.1"]
-                                         [org.glassfish.jaxb/jaxb-runtime "2.3.1"]]}
-
              :test     {:dependencies [[com.nedap.staffing-solutions/utils.test "1.6.2"]]
                         :plugins      [[lein-cloverage "1.1.1"]]
                         :jvm-opts     ["-Dclojure.core.async.go-checking=true"
                                        "-Duser.language=en-US"]}
 
-             :ncrw       {:global-vars  {*assert* true} ;; `ci.release-workflow` relies on runtime assertions
+             :ncrw       {:global-vars    {*assert* true} ;; `ci.release-workflow` relies on runtime assertions
                           :source-paths   ^:replace []
                           :test-paths     ^:replace []
                           :resource-paths ^:replace []

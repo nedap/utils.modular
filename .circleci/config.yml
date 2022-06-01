@@ -114,7 +114,9 @@ workflows:
           context: Github
           <<: *test_code_filters
       - deploy:
-          context: Github
+          context:
+            - Github
+            - GPG
           requires:
             - "Ensure artifact isolation, inform of boxed math"
             - test_cljs_code
