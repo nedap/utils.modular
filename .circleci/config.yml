@@ -115,7 +115,7 @@ workflows:
           <<: *test_code_filters
       - deploy:
           context:
-            - Github
+            - Clojars
             - GPG
           requires:
             - "Ensure artifact isolation, inform of boxed math"
