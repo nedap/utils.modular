@@ -8,8 +8,6 @@
   :managed-dependencies [[org.clojure/core.rrb-vector "0.1.2"]
                          [org.clojure/data.json "2.4.0"]
                          [org.clojure/tools.reader "1.3.6"]]
-
-
   :exclusions [com.nedap.staffing-solutions/utils.modular]
 
   :description "Utilities for creating modular Clojure systems."
