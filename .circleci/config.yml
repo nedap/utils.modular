@@ -19,46 +19,27 @@ executor_defaults: &executor_defaults
   working_directory: ~/repo
 
 executors:
-  openjdk8:
+  jdk:
     docker:
-      - image: circleci/clojure:openjdk-8-lein-2.9.1
+      - image: cimg/clojure:1.11.1-node
     environment:
       LEIN_ROOT: "true"
       JVM_OPTS: -Xmx3200m
-    <<: *executor_defaults
-  openjdk8-node:
-    docker:
-      - image: circleci/clojure:openjdk-8-lein-2.9.1-node
-    environment:
-      LEIN_ROOT: "true"
-      JVM_OPTS: -Xmx3200m
-    <<: *executor_defaults
-  openjdk11:
-    docker:
-      - image: circleci/clojure:openjdk-11-lein-2.9.1
-    environment:
-      LEIN_ROOT: "true"
-      JVM_OPTS: -Xmx3200m --illegal-access=deny
     <<: *executor_defaults
 
 jobs:
   test_code:
-    description: |
-      Runs tests against given version of the JDK
     parameters:
-      jdk_version:
-        description: Version of the JDK to test against
-        type: string
       lein_test_command:
         description: A Leiningen command that will run a test suite
         type: string
-    executor: << parameters.jdk_version >>
+    executor: jdk
     steps:
       - setup-env
       - run:
           command: << parameters.lein_test_command >>
   cloverage:
-    executor: openjdk8
+    executor: jdk
     steps:
       - setup-env
       - run:
@@ -69,7 +50,7 @@ jobs:
       - store_artifacts:
           path: ~/repo/coverage
   test_cljs_code:
-    executor: openjdk8-node
+    executor: jdk
     steps:
       - setup-env
       - run:
@@ -79,7 +60,7 @@ jobs:
           name: 'Run node.js tests'
           command: node target/out/tests.js
   deploy:
-    executor: openjdk8
+    executor: jdk
     steps:
       - setup-env
       - run:
@@ -89,11 +70,8 @@ jobs:
           name: Perform pre-release sanity check
           command: lein with-profile -dev,+ci,+ncrw run -m nedap.ci.release-workflow.api sanity-check
       - run:
-          name: release to JFrog
-          command: lein deploy
-      - run:
           name: release to Clojars
-          command: lein deploy clojars          
+          command: lein deploy clojars
 
 test_code_filters: &test_code_filters
   filters:
@@ -108,74 +86,41 @@ workflows:
     jobs:
       - test_code:
           name: "Ensure artifact isolation, inform of boxed math"
-          jdk_version: openjdk8
           lein_test_command: lein with-profile -dev,+check check
-          context: JFrog
+          context: Github
           <<: *test_code_filters
       - cloverage:
           requires:
             - "Ensure artifact isolation, inform of boxed math"
-          context: JFrog
+          context: Github
           <<: *test_code_filters
       - test_cljs_code:
-          context: JFrog
+          context: Github
           <<: *test_code_filters
       - test_code:
-          name: "JDK 8, plain"
-          jdk_version: openjdk8
-          lein_test_command: lein with-profile -dev,+ci do clean, test
-          requires:
-            - "Ensure artifact isolation, inform of boxed math"
-            - cloverage
-          context: JFrog
-          <<: *test_code_filters
-      - test_code:
-          name: "JDK 8, with an old clojurescript dependency on the classpath"
-          jdk_version: openjdk8
-          lein_test_command: lein with-profile -dev,-provided,+ci,+cljs-old do clean, test
-          requires:
-            - "Ensure artifact isolation, inform of boxed math"
-            - cloverage
-          context: JFrog
-          <<: *test_code_filters
-      - test_code:
-          name: "JDK 8, with production-like compiler flags"
-          jdk_version: openjdk8
-          lein_test_command: lein with-profile -dev,+ci,+production do clean, test
-          requires:
-            - "Ensure artifact isolation, inform of boxed math"
-            - cloverage
-          context: JFrog
-          <<: *test_code_filters
-      - test_code:
-          name: "JDK 11, plain"
-          jdk_version: openjdk11
+          name: "JDK, plain"
           lein_test_command: lein with-profile -dev,+ci,+jdk11 do clean, test
           requires:
             - "Ensure artifact isolation, inform of boxed math"
             - cloverage
-          context: JFrog
+          context: Github
           <<: *test_code_filters
       - test_code:
-          name: "JDK 11, with production-like compiler flags"
-          jdk_version: openjdk11
+          name: "JDK, with production-like compiler flags"
           lein_test_command: lein with-profile -dev,+ci,+jdk11,+production do clean, test
           requires:
             - "Ensure artifact isolation, inform of boxed math"
             - cloverage
-          context: JFrog
+          context: Github
           <<: *test_code_filters
       - deploy:
-          context: JFrog
+          context: Github
           requires:
             - "Ensure artifact isolation, inform of boxed math"
             - test_cljs_code
             - cloverage
-            - "JDK 8, plain"
-            - "JDK 8, with an old clojurescript dependency on the classpath"
-            - "JDK 8, with production-like compiler flags"
-            - "JDK 11, plain"
-            - "JDK 11, with production-like compiler flags"
+            - "JDK, plain"
+            - "JDK, with production-like compiler flags"
           filters:
             branches:
               ignore: /.*/

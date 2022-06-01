@@ -5,6 +5,11 @@
                  [com.stuartsierra/component "0.4.0"]
                  [org.clojure/clojure "1.10.1"]]
 
+  :managed-dependencies [[org.clojure/core.rrb-vector "0.1.2"]
+                         [org.clojure/data.json "2.4.0"]
+                         [org.clojure/tools.reader "1.3.6"]]
+
+
   :exclusions [com.nedap.staffing-solutions/utils.modular]
 
   :description "Utilities for creating modular Clojure systems."
@@ -18,13 +23,9 @@
 
   :signing {:gpg-key "releases-staffingsolutions@nedap.com"}
 
-  :repositories {"releases" {:url      "https://nedap.jfrog.io/nedap/staffing-solutions/"
-                             :username :env/artifactory_user
-                             :password :env/artifactory_pass}}
-
-  :repository-auth {#"https://nedap.jfrog\.io/nedap/staffing-solutions/"
-                    {:username :env/artifactory_user
-                     :password :env/artifactory_pass}}
+  :repositories {"github" {:url "https://maven.pkg.github.com/nedap/*"
+                           :username "github"
+                           :password :env/github_token}}
 
   :deploy-repositories {"clojars" {:url      "https://clojars.org/repo"
                                    :username :env/clojars_user
@@ -74,21 +75,7 @@
                         :source-paths ["dev"]
                         :repl-options {:init-ns dev}}
 
-             :cljs-old {:dependencies [[org.clojure/clojurescript "1.7.228"
-                                        :exclusions [com.cognitect/transit-clj
-                                                     com.google.code.findbugs/jsr305
-                                                     com.google.errorprone/error_prone_annotations]]]}
-
-             :provided {:dependencies [[org.clojure/clojurescript "1.10.597"
-                                        :exclusions [com.cognitect/transit-clj
-                                                     com.google.code.findbugs/jsr305
-                                                     com.google.errorprone/error_prone_annotations]]
-                                       [com.fasterxml.jackson.core/jackson-core "2.10.2" #_"transitive"]
-                                       [com.google.guava/guava "25.1-jre" #_"transitive"]
-                                       [com.google.protobuf/protobuf-java "3.4.0" #_"transitive"]
-                                       [com.cognitect/transit-clj "0.8.313" #_"transitive"]
-                                       [com.google.errorprone/error_prone_annotations "2.1.3" #_"transitive"]
-                                       [com.google.code.findbugs/jsr305 "3.0.2" #_"transitive"]]}
+             :provided {:dependencies [[org.clojure/clojurescript "1.10.914"]]}
 
              :check    {:global-vars  {*unchecked-math* :warn-on-boxed
                                        ;; avoid warnings that cannot affect production:
@@ -104,8 +91,7 @@
              :jdk11      {:dependencies [[javax.xml.bind/jaxb-api "2.3.1"]
                                          [org.glassfish.jaxb/jaxb-runtime "2.3.1"]]}
 
-             :test     {:dependencies [[com.nedap.staffing-solutions/utils.test "1.6.2"]
-                                       [org.clojure/tools.reader "1.3.3" #_"transitive"]]
+             :test     {:dependencies [[com.nedap.staffing-solutions/utils.test "1.6.2"]]
                         :plugins      [[lein-cloverage "1.1.1"]]
                         :jvm-opts     ["-Dclojure.core.async.go-checking=true"
                                        "-Duser.language=en-US"]}
@@ -115,7 +101,7 @@
                           :test-paths     ^:replace []
                           :resource-paths ^:replace []
                           :plugins        ^:replace []
-                          :dependencies   ^:replace [[com.nedap.staffing-solutions/ci.release-workflow "1.13.1"]]}
+                          :dependencies   ^:replace [[com.nedap.staffing-solutions/ci.release-workflow "1.14.1"]]}
 
              :ci       {:pedantic?    :abort
                         :jvm-opts     ["-Dclojure.main.report=stderr"]}})
